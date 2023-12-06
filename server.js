@@ -14,6 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.use(express.static("public")); // Serve static files from the "public" folder
 const httpServer = createServer(app); // Attach the Express app to the HTTP server
 const io = new Server(httpServer);
 
@@ -34,7 +35,6 @@ io.on("connection", function (socket) {
 });
 
 app.get("/*", (req, res) => {
-  console.log("123", req.url);
   if (req.url == "/") {
     fs.readFile("./src/index.html", "utf8", (err, data) => {
       const dom = new JSDOM(data);
@@ -53,6 +53,7 @@ app.get("/*", (req, res) => {
           }
         })
       `;
+
       dom.window.document.head.appendChild(scriptSocketCode);
 
       res.send(dom.serialize());
